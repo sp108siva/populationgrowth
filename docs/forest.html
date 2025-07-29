@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+body {
+  font: 16px sans-serif;
+  background-image: url('/data/image.jpg');
+}
+.tooltip {
+            position: absolute;
+            font-size: 12px;
+            width:  auto;
+            height: auto;
+            pointer-events: none;
+			background: white;
+			border: 1px black;
+			color: black;
+        }
+.axis--x path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.first-page {
+  float: right;
+  padding: 15px 25px;
+  text-decoration: none;
+}
+
+.back-page {
+  float: left;
+  padding: 15px 25px;
+  text-decoration: none;
+}
+
+#container div{
+    display:inline-block;
+    width:130px;
+}
+/*pagination */
+
+.pag_sec a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #ddd;
+    margin: 0 4px;
+}
+
+.pag_sec a.active {
+    background-color: #4c77af;
+    color: white;
+
+}
+.pag_sec a.highlight {
+    background-color: #00c9d2;
+    color: white;
+    border: 1px solid #af4c4c;
+}
+
+.cen {
+  text-align: right;
+  margin-top: 2rem;
+}
+
+.pag_sec {
+    display: inline-block;
+}
+.pag_sec a {
+    border-radius: 5px;
+}
+
+.pag_sec a.active {
+    border-radius: 5px;
+}
+
+ul li {
+  margin-top: 15px;
+  word-wrap: break-word;
+  line-height: 25px;
+}
+
+#dataviz {
+  text-align: center;
+}
+
+.headerstyle {
+    display: flex;
+    padding-left: 20px;
+    margin: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-family: Georgia,serif;
+}
+
+</style>
+<body>
+<div class= "headerstyle">
+    <h1>Population growth impact on Forest</h1></div>
+<hr style="width:40%;text-align:center;margin-left:auto";>
+    <ul>
+      <li>Line chart of percentage of forest area for different countries. X-axis shows the years versus forest area in the Y-axis </li>
+        <li>
+            Visualization presents that forest area has been depleting as the population is growing. As a result of depletion in forest area, environment is negatively impacted like extinction of wildlife, soil erosion, floods, global warming, loss of biodiversity
+        </li>
+      <li>For the purpose of this project dataset is considered from the year 2000 through 2018</li>
+    </ul>
+    <div class="cen">
+      <div class="pag_sec">
+          <a href="carbonemission.html" class="active">Previous Page</a>
+          <a href="index.html" >1</a>
+          <a href="carbonemission.html">2</a>
+          <a href="#" class="highlight">3</a>
+          <a href="index.html" class="active">&nbsp &nbspStart Again &nbsp &nbsp</a>
+      </div>
+  </div>
+
+<div id="dataviz">
+<svg width="1200" height="1000"></svg>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script>
+var parseDate = d3.timeParse("%Y");
+
+function type(d, _, columns) {
+  d.date = parseDate(d.date);
+  for (var i = 1, n = columns.length, c; i < n; ++i) d[c = columns[i]] = +d[c];
+  return d;
+}
+
+var svg = d3.select("svg"),
+    margin = {top: 20, right: 120, bottom: 100, left: 40},
+    width = svg.attr("width") - margin.left - margin.right,
+    height = svg.attr("height") - margin.top - margin.bottom,
+    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+d3.csv("https://raw.githubusercontent.com/rubelghosh/rubelghosh.github.io/main/data/forest_area.csv",type, function(error, data) {
+  if (error) throw error;
+
+var x = d3.scaleTime().range([0, width]),
+    y = d3.scaleLinear().range([height, 0]),
+    z = d3.scaleOrdinal(d3.schemeCategory10);
+
+var line = d3.line()
+    .curve(d3.curveBasis)
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.forestarea); });
+
+  var countries = data.columns.slice(1).map(function(id) {
+    return {
+      id: id,
+      values: data.map(function(d) {
+        return {date: d.date, forestarea: d[id]};
+      })
+    };
+  });
+
+  x.domain(d3.extent(data, function(d) { return d.date; }));  
+
+  y.domain([
+    d3.min(countries, function(c) { return d3.min(c.values, function(d) { return d.forestarea; }); }),
+    d3.max(countries, function(c) { return d3.max(c.values, function(d) { return d.forestarea; }); })
+  ]);
+
+  z.domain(countries.map(function(c) { return c.id; }));
+
+  g.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height+ ")")
+      .call(d3.axisBottom(x));
+
+  g.append("g")
+      .attr("class", "axis axis--y")
+      .call(d3.axisLeft(y))
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("y", 2-margin.left)
+      .attr("x",0-height/2)
+      .attr("dy", "0.71em")
+      .attr("fill", "#1e1a1a")
+      .style("font" ,"16px sans-serif")
+      .text("Forest Area (%)");
+
+  var country = g.selectAll(".country")
+    .data(countries)
+    .enter().append("g")
+      .attr("class", "country");
+
+  country.append("path")
+      .attr("class", "line")
+      .attr("d", function(d) { return line(d.values); })
+      .style("stroke", function(d) { return z(d.id); });
+
+  country.append("text")
+      .datum(function(d) { return {id: d.id, value: d.values[d.values.length-1 ]}; })
+      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.forestarea) + ")"; })
+      .attr("x", 3)
+      .attr("dy", "0.35em")
+      .style("font", "12px sans-serif")
+      .text(function(d) { return d.id; });
+});
+
+svg.append("text")
+        .attr("x", 400)
+        .attr("y", 100)
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("font-weight", "bold")
+        .text("Population increases, Forest area decreases");
+
+
+
+</script>
+</div>
+</body>
+

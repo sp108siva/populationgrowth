@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>CS 416 Data Visualization - Final Project </title>
+  <meta name="author" content="Rubel Ghosh">
+  <meta name="description" content="">
+
+  <link rel="stylesheet" href="css/annotation-style.css">
+</head>
+<style>
+
+body {
+  font: 16px sans-serif;
+    background-image: url('/data/image.jpg');
+}
+
+.next-page {
+  display: flex;
+  justify-content: center;
+  padding: 15px 25px;
+  text-decoration: none;
+}
+
+.headerstyle {
+  display: flex;
+  padding-left: 20px;
+  margin: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-family: Georgia,serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #000;
+}
+.tooltip {
+            position: absolute;
+            font-size: 12px;
+            width:  auto;
+            height: auto;
+            pointer-events: none;
+			background: white;
+			border: 1px black;
+			color: black;
+        }
+/*pagination */
+
+.pag_sec a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #ddd;
+    margin: 0 4px;
+}
+
+.pag_sec a.active {
+    background-color: #4c77af;
+    color: white;
+
+}
+.cen {
+    text-align: right;
+    margin-top: 2rem;
+}
+.pag_sec a.highlight {
+    background-color: #00c9d2;
+    color: white;
+    border: 1px solid #af4c4c;
+}
+.pag_sec {
+    display: inline-block;
+}
+.pag_sec a {
+    border-radius: 5px;
+}
+
+.pag_sec a.active {
+    border-radius: 5px;
+}
+
+ul li {
+  margin-top: 15px;
+  word-wrap: break-word;
+  line-height: 25px;
+}
+
+#dataviz {
+  text-align: center;
+}
+
+</style>
+<body>
+<div id="container">
+<div class= "headerstyle">
+  <h1>Population growth impact on GDP</h1>
+
+</div>
+    <hr style="width:40%;text-align:center;margin-left:auto";>
+    <ul>
+      <li>Scatterplot of "Population Growth Vs GDP growth rate" depicts the GDP growth rate on the X-axis versus percentage of population growth along the Y-axis and the population as the size of the circles in the scatter plot.
+        The color scheme is based on the population growth size </li>
+        <li>Visualization presents that GDP of many low-income and lower-middle-income countries are not growing proportional to the population growth. GDP of many low-income and lower-middle-income countries are not growing proportional to the population growth</li>
+
+        <li>For the purpose of this project dataset is considered from the year 2000 through 2018</li>
+      <li>Explore population growth across different countries <a href="populationgrowth.html"><strong>Click Here</strong></a></li>
+    </ul>
+    <div class="cen">
+      <div class="pag_sec">
+          <a href="#"class="highlight">1</a>
+          <a href="carbonemission.html">2</a>
+          <a href="forest.html" >3</a>
+          <a href="carbonemission.html" class="active">&nbsp &nbspNext Page &nbsp &nbsp</a>
+      </div>
+    </div>
+
+<!-- Create a div where the graph will take place -->
+<div id="dataviz" width=460 height=400>
+      <div id="annot-stps">
+          <div class="annot" id="stp-high-annot" >
+          </div>
+          </div>
+
+</div>
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+<script>
+
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 800 - margin.left - margin.right,
+    height = 550 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#dataviz")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right) //550
+    .attr("height", height + margin.top + margin.bottom+10) //440
+    .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+//Read the data
+d3.csv("https://raw.githubusercontent.com/rubelghosh/rubelghosh.github.io/main/data/pop_gdp.csv", function(data) {
+
+
+  // Add X axis
+var xScale=d3.scaleLinear().domain([-15,15]).range([0,width]);
+var yScale=d3.scaleLinear().domain([0,100]).range([height, 0]);
+
+  svg.append("g")
+    .attr("transform","translate(0,"+ height + ")")
+    .call(d3.axisBottom(xScale));
+
+  // Add Y axis
+  svg.append("g")
+    .call(d3.axisLeft(yScale));
+  
+ var circle_size = d3.scaleLinear().domain([0,15]).range([0,15]);
+ 
+ var tooltip = d3.select("body").append("div")
+                  .attr("class", "tooltip")
+                  .style("opacity", 0);
+				  
+				
+          
+              // tooltip mouseover event handler
+        var tipMouseover = function(d) {
+        var html  = "<span style='color:black'> Country Name: " + d['country'] + "<br/>" + "GDP Growth Rate: " + d.gdp_growth_rate + " <br/>" + "Recent GDP Rate: " + d.recent_gdp_growth_rate + "<br />"+ "Population Growth %: "
+            + d.population_growth + " <br />" + "Recent Population: " + d.recent_population + "<br /></span>";
+
+
+        tooltip.html(html)
+                      .style("left",  (d3.event.pageX + 15) + "px")
+                      .style("top", (d3.event.pageY - 28) + "px")
+                    .transition()
+                      .duration(200) // milli seconds
+                      .style("opacity", 1) 
+                      .style("position", "absolute")
+                      .style("z-index", "10")
+                      .style("background", "lightseagreen")
+                        .style('font-weight','bold')
+
+              };
+              // tooltip mouseout event handler
+              var tipMouseout = function(d) {
+                  tooltip.transition()
+                      .duration(300) // ms
+                      .style("opacity", 0); 
+              };
+
+        
+  // Add dots
+  svg.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return xScale(d.gdp_growth_rate); } )
+      .attr("cy", function (d) { return yScale(d.population_growth); } )
+      .attr("r", function (d) { return circle_size(d.population_bucket); } )
+      .attr("fill", function(d) {
+          if (d.population_growth >= 60) {
+              return "steelblue";
+          } else if (d.population_growth >= 30 && d.population_growth < 60) {
+              return "yellow";
+          } else if (d.population_growth >= 20 && d.population_growth < 30) {
+              return "red";
+          }
+          return "forestgreen";
+      })
+      .style("stroke", "black")
+	  .on("mouseover", tipMouseover)
+      .on("mouseout", tipMouseout);
+
+      
+
+})
+
+// svg.append("text")
+//         .attr("x", (width / 2))
+//         .attr("y", 5 - (margin.top / 2))
+//         .attr("text-anchor", "middle")
+//         .style("font-size", "20px")
+//         .style("font-weight", "bold")
+//         .text("Population vs GDP");
+
+svg.append("text")      // text label x axis
+        .attr("x", (width / 2) )
+        .attr("y", height+margin.top+10 )
+        .style("text-anchor", "middle")
+        .text("gdp growth rate");
+        
+svg.append("text")  // text label y axis
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0-margin.left)
+        .attr("x",0-height/2)
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .style("font" ,"16px sans-serif")
+        .text("population growth %");
+                
+</script>
+    <!--pagination-->
+</div>
+</body>
