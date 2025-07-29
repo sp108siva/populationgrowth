@@ -6,12 +6,11 @@ body {
     background-image: url('/data/image.jpg');
 }
 .bar {
-  fill: lightseagreen;
-    fill: slateblue;
+  fill: #5a7be2;
 }
 
 .bar:hover {
-  fill: brown;
+  fill: #a0522d;
 }
 
 .axis--x path {
@@ -44,7 +43,7 @@ body {
 }
 
 .pag_sec a.active {
-    background-color: #4c77af;
+    background-color: #3c6fa0;
     color: white;
 
 }
@@ -64,7 +63,7 @@ body {
     border-radius: 5px;
 }
 .pag_sec a.highlight {
-    background-color: #00c9d2;
+    background-color: #00b9c2;
     color: white;
     border: 1px solid #af4c4c;
 }
@@ -92,15 +91,15 @@ ul li {
 <body>
 
     <div class="headerstyle">
-        <h1>Population growth impact on CO<sub>2</sub> Emission</h1>
+        <h1>CO<sub>2</sub> Emissions and Population Growth</h1>
     </div>
     <hr style="width:50%;text-align:center;margin-left:auto";>
     <ul>
-         <li>Bar chart of carbon dioxide (CO<sub>2</sub>) across different countries. X-axis shows the countries versus carbon dioxide emission increase percentage on the Y-axis </li>
+         <li>Bar chart of carbon dioxide (CO<sub>2</sub>) emissions by country. X-axis: countries, Y-axis: CO<sub>2</sub> emission increase (%)</li>
         <li>
-            Visualization presents that CO<sub>2</sub> Emission have increased due to growth of population across different countries in the world. Global temperature have been raised due to increase in CO<sub>2</sub> emission
+            This chart shows how CO<sub>2</sub> emissions have risen alongside population growth in various countries. Higher emissions contribute to global temperature rise.
         </li>
-        <li>For the purpose of this project dataset is considered from the year 2000 through 2018</li>
+        <li>Dataset covers 2000–2018.</li>
     </ul>
 
     <div class="cen">
@@ -161,7 +160,7 @@ var x = d3.scaleBand().rangeRound([15, width]).padding(0.1),
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("https://github.com/sp108siva/populationgrowth/blob/main/data/carbon_emission.csv", function(d) {
+d3.csv("https://raw.githubusercontent.com/sp108siva/populationgrowth/main/data/carbon_emission.csv", function(d) {
   d.Avg = +d.carbon_emission;
   return d;
 }, function(error, data) {

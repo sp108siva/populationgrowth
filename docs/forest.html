@@ -21,7 +21,7 @@ body {
 
 .line {
   fill: none;
-  stroke: steelblue;
+  stroke: #2a7bcb;
   stroke-width: 1.5px;
 }
 
@@ -54,12 +54,12 @@ body {
 }
 
 .pag_sec a.active {
-    background-color: #4c77af;
+    background-color: #3c6fa0;
     color: white;
 
 }
 .pag_sec a.highlight {
-    background-color: #00c9d2;
+    background-color: #00b9c2;
     color: white;
     border: 1px solid #af4c4c;
 }
@@ -102,14 +102,14 @@ ul li {
 </style>
 <body>
 <div class= "headerstyle">
-    <h1>Population growth impact on Forest</h1></div>
+    <h1>Population Growth and Forest Area</h1></div>
 <hr style="width:40%;text-align:center;margin-left:auto";>
     <ul>
-      <li>Line chart of percentage of forest area for different countries. X-axis shows the years versus forest area in the Y-axis </li>
+      <li>Line chart showing forest area percentage for different countries. X-axis: years, Y-axis: forest area (%)</li>
         <li>
-            Visualization presents that forest area has been depleting as the population is growing. As a result of depletion in forest area, environment is negatively impacted like extinction of wildlife, soil erosion, floods, global warming, loss of biodiversity
+            This visualization demonstrates that as population increases, forest area tends to decrease, impacting the environment (e.g., biodiversity loss, soil erosion, global warming).
         </li>
-      <li>For the purpose of this project dataset is considered from the year 2000 through 2018</li>
+      <li>Dataset covers 2000–2018.</li>
     </ul>
     <div class="cen">
       <div class="pag_sec">
@@ -140,7 +140,7 @@ var svg = d3.select("svg"),
     g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-d3.csv("https://github.com/sp108siva/populationgrowth/blob/main/data/forest_area.csv",type, function(error, data) {
+d3.csv("https://raw.githubusercontent.com/sp108siva/populationgrowth/main/data/forest_area.csv",type, function(error, data) {
   if (error) throw error;
 
 var x = d3.scaleTime().range([0, width]),

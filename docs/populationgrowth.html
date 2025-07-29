@@ -6,11 +6,11 @@ body {
   background-image: url('/data/image.jpg');
 }
 .bar {
-  fill: forestgreen;
+  fill: #2e8b57;
 }
 
 .bar:hover {
-  fill: brown;
+  fill: #a0522d;
 }
 
 .headerstyle {
@@ -68,7 +68,7 @@ body {
 }
 
 .pag_sec a.active {
-  background-color: #4c77af;
+  background-color: #3c6fa0;
   color: white;
 }
 .cen {
@@ -105,17 +105,17 @@ ul li {
 </style>
 <body>
   <div class= "headerstyle">
-    <h1>Population growth in different countries</h1>
+    <h1>Population Growth by Country</h1>
   </div>
   <hr style="width:40%;text-align:center;margin-left:auto";>
   <ul>
      <li>
-      Bar chart of population growth across different countries. Countries are mentioned on the X-axis versus the population growth on the Y-axis
+      Bar chart showing population growth for various countries. X-axis: countries, Y-axis: population growth (%)
     </li>
     <li>
-      Visualization presents the population growth trends across different countries in the world
+      This chart highlights population growth trends in different countries.
     </li>
-    <li>For the purpose of this project dataset is considered from the year 2000 through 2018</li>
+    <li>Dataset covers 2000–2018.</li>
   </ul>  
   </div> 
   <div class="cen">
@@ -168,7 +168,7 @@ var x = d3.scaleBand().range([0, width]).padding(0.2),
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("https://github.com/sp108siva/populationgrowth/blob/main/data/pop_inc.csv", function(d) {
+d3.csv("https://raw.githubusercontent.com/sp108siva/populationgrowth/main/data/pop_inc.csv", function(d) {
   d.Avg = +d.population_growth;
   return d;
 }, function(error, data) {
