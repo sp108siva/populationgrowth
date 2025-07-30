@@ -131,6 +131,8 @@ var tooltip = d3.select("body").append("div")
     .style("opacity", 0);
 
 d3.csv("https://raw.githubusercontent.com/sp108siva/populationgrowth/main/data/pop_gdp.csv", function(data) {
+  // Sort by population growth descending and take top 15
+  data = data.sort(function(a, b) { return +b.population_growth - +a.population_growth; }).slice(0, 15);
   var subgroups = ["gdp_growth_rate", "population_growth"];
   var groups = data.map(function(d) { return d.country; });
 
@@ -143,7 +145,7 @@ d3.csv("https://raw.githubusercontent.com/sp108siva/populationgrowth/main/data/p
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x0))
     .selectAll("text")
-      .attr("transform", "rotate(-65)")
+      .attr("transform", "rotate(-40)")
       .style("text-anchor", "end");
 
   svg.append("g")
