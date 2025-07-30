@@ -131,8 +131,10 @@ var tooltip = d3.select("body").append("div")
     .style("opacity", 0);
 
 d3.csv("https://raw.githubusercontent.com/sp108siva/populationgrowth/main/data/pop_gdp.csv", function(data) {
-  // Sort by population growth descending and take top 15
-  data = data.sort(function(a, b) { return +b.population_growth - +a.population_growth; }).slice(0, 15);
+  // Filter for countries with high population growth AND high GDP growth
+  // Let's define high as top 15 by population growth, then sort those by GDP growth and take the top 10
+  data = data.filter(function(d) { return +d.population_growth > 30; });
+  data = data.sort(function(a, b) { return +b.gdp_growth_rate - +a.gdp_growth_rate; }).slice(0, 10);
   var subgroups = ["gdp_growth_rate", "population_growth"];
   var groups = data.map(function(d) { return d.country; });
 
@@ -187,17 +189,15 @@ d3.csv("https://raw.githubusercontent.com/sp108siva/populationgrowth/main/data/p
   legend.append("rect").attr("x", 0).attr("y", 28).attr("width", 18).attr("height", 18).attr("fill", "#43a047");
   legend.append("text").attr("x", 26).attr("y", 41).text("Population Growth");
 
-  // Annotation example: highlight a country with high pop growth but low GDP growth
-  var highlight = data.reduce(function(prev, curr) {
-    return (+curr.population_growth > 50 && +curr.gdp_growth_rate < 2) ? curr : prev;
-  }, null);
+  // Annotation: highlight the country with the highest GDP growth
+  var highlight = data[0];
   if (highlight) {
     svg.append("text")
       .attr("class", "annotation")
-      .attr("x", x0(highlight.country) + x1("population_growth") + x1.bandwidth()/2)
-      .attr("y", y(highlight.population_growth) - 15)
+      .attr("x", x0(highlight.country) + x1("gdp_growth_rate") + x1.bandwidth()/2)
+      .attr("y", y(highlight.gdp_growth_rate) - 15)
       .attr("text-anchor", "middle")
-      .text("High pop, low GDP");
+      .text("Highest GDP growth");
   }
 });
 </script>
